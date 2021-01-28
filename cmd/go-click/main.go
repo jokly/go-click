@@ -10,7 +10,7 @@ import (
 
 func main() {
 	logService := service.NewLogService()
-	endpoints := endpoint.New(logService)
+	endpoints := endpoint.MakeEndpoints(logService)
 	httpHandler := transport.MakeHTTPHandler(endpoints)
 
 	server := &http.Server{

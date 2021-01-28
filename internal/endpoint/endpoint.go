@@ -11,25 +11,17 @@ type Endpoints struct {
 	SendEndpoint endpoint.Endpoint
 }
 
-func New(svc service.Service) Endpoints {
-	sendEndpoint := MakeSendEndpoint(svc)
-
+func MakeEndpoints(svc service.Service) Endpoints {
 	return Endpoints{
-		SendEndpoint: sendEndpoint,
+		SendEndpoint: makeSendEndpoint(svc),
 	}
 }
 
-func MakeSendEndpoint(svc service.Service) endpoint.Endpoint {
+func makeSendEndpoint(svc service.Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(SendRequest)
 		err := svc.Send(ctx, req)
 
-		return SendResponse{Err: err}, nil
+		return SendResponse{Error: err}, nil
 	}
-}
-
-type SendRequest interface{}
-
-type SendResponse struct {
-	Err error `json:"-"`
 }
