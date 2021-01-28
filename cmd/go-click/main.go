@@ -18,5 +18,6 @@ func main() {
 		Handler: httpHandler,
 	}
 
+	// Test
 	_ = server.ListenAndServe()
 }
