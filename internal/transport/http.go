@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	kitendpoint "github.com/go-kit/kit/endpoint"
-	httptransport "github.com/go-kit/kit/transport/http"
+	kithttp "github.com/go-kit/kit/transport/http"
 	"github.com/gorilla/mux"
 	"github.com/jokly/go-click/internal/endpoint"
 )
@@ -14,7 +14,7 @@ import (
 func MakeHTTPHandler(endpoints endpoint.Endpoints) http.Handler {
 	r := mux.NewRouter()
 
-	r.Handle("/send", httptransport.NewServer(
+	r.Handle("/send", kithttp.NewServer(
 		endpoints.SendEndpoint,
 		decodeHTTPSendRequest,
 		encodeHTTPResponse,
@@ -32,23 +32,18 @@ func decodeHTTPSendRequest(_ context.Context, r *http.Request) (interface{}, err
 
 func encodeHTTPResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
 	if f, ok := response.(kitendpoint.Failer); ok && f.Failed() != nil {
-		errorEncoder(ctx, f.Failed(), w)
+		encodeError(ctx, f.Failed(), w)
 
 		return nil
 	}
 
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
 
-	return json.NewEncoder(w).Encode(response)
+	return nil
 }
 
-type errorWrapper struct {
-	Error string `json:"error"`
-}
-
-func errorEncoder(_ context.Context, err error, w http.ResponseWriter) {
+func encodeError(_ context.Context, err error, w http.ResponseWriter) {
 	w.WriteHeader(convertErrorToCode(err))
-	_ = json.NewEncoder(w).Encode(errorWrapper{Error: err.Error()})
 }
 
 func convertErrorToCode(_ error) int {
