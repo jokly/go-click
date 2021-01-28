@@ -18,5 +18,5 @@ func main() {
 		Handler: httpHandler,
 	}
 
-	server.ListenAndServe()
+	_ = server.ListenAndServe()
 }
