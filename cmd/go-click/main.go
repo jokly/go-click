@@ -1,6 +1,8 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"net/http"
 
 	"github.com/jokly/go-click/internal/endpoint"
@@ -9,12 +11,17 @@ import (
 )
 
 func main() {
+	configFilePath := flag.String("config", "", "path to config file (e.g. /config/config.yaml)")
+	flag.Parse()
+
+	config, _ := loadConfig(*configFilePath)
+
 	logService := service.NewLogService()
 	endpoints := endpoint.MakeEndpoints(logService)
 	httpHandler := transport.MakeHTTPHandler(endpoints)
 
 	server := &http.Server{
-		Addr:    ":8888",
+		Addr:    fmt.Sprintf(":%d", config.Http.Port),
 		Handler: httpHandler,
 	}
 
