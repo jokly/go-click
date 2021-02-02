@@ -5,10 +5,14 @@ import (
 )
 
 type Config struct {
-	Http HttpConfig
+	Logger LoggerConfig
+	HTTP   HTTPConfig
 }
 
-type HttpConfig struct {
+type LoggerConfig struct {
+	MinLevel int8
+}
+type HTTPConfig struct {
 	Port int
 }
 

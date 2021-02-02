@@ -6,6 +6,12 @@ run:
 output:
   format: colored-line-number
 
+linters-settings:
+  errcheck:
+    exclude: config/golangci_exclude.txt
+  exhaustive:
+    default-signifies-exhaustive: true
+
 linters:
   disable-all: true
   enable:

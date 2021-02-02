@@ -2,17 +2,23 @@ package service
 
 import (
 	"context"
-	"fmt"
+
+	"github.com/go-kit/kit/log"
+	"github.com/go-kit/kit/log/level"
 )
 
-type logService struct{}
+type logService struct {
+	logger log.Logger
+}
 
-func NewLogService() Service {
-	return logService{}
+func NewLogService(logger log.Logger) Service {
+	return logService{
+		logger: logger,
+	}
 }
 
 func (svc logService) Send(_ context.Context, event interface{}) error {
-	fmt.Printf("%v\n", event)
+	level.Info(svc.logger).Log("event", event)
 
 	return nil
 }

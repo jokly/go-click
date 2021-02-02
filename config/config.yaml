@@ -1,2 +1,7 @@
+logger:
+  # Minimum logging level
+  # Debug = -1 | Info = 0 | Warn = 1 | Error = 2
+  minLevel: -1
+
 http:
   port: 8080

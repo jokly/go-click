@@ -6,18 +6,25 @@ import (
 	"net/http"
 
 	kitendpoint "github.com/go-kit/kit/endpoint"
+	"github.com/go-kit/kit/log"
+	"github.com/go-kit/kit/transport"
 	kithttp "github.com/go-kit/kit/transport/http"
 	"github.com/gorilla/mux"
 	"github.com/jokly/go-click/internal/endpoint"
 )
 
-func MakeHTTPHandler(endpoints endpoint.Endpoints) http.Handler {
+func MakeHTTPHandler(endpoints endpoint.Endpoints, logger log.Logger) http.Handler {
+	options := []kithttp.ServerOption{
+		kithttp.ServerErrorHandler(transport.NewLogErrorHandler(logger)),
+	}
+
 	r := mux.NewRouter()
 
 	r.Handle("/send", kithttp.NewServer(
 		endpoints.SendEndpoint,
 		decodeHTTPSendRequest,
 		encodeHTTPResponse,
+		options...,
 	))
 
 	return r
