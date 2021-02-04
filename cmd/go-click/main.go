@@ -8,6 +8,7 @@ import (
 	"github.com/go-kit/kit/log/level"
 	"github.com/jokly/go-click/internal/endpoint"
 	"github.com/jokly/go-click/internal/service"
+	"github.com/jokly/go-click/internal/service/adapter"
 	"github.com/jokly/go-click/internal/transport"
 	"github.com/jokly/go-click/internal/util"
 )
@@ -27,7 +28,8 @@ func main() {
 		_ = zLogger.Sync()
 	}()
 
-	logService := service.NewLogService(logger)
+	logAdapter := adapter.MakeLogAdapter(logger)
+	logService := service.MakeSenderService(logAdapter)
 	endpoints := endpoint.MakeEndpoints(logService)
 	httpHandler := transport.MakeHTTPHandler(endpoints, logger)
 
