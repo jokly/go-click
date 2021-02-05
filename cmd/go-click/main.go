@@ -29,7 +29,7 @@ func main() {
 	}()
 
 	logAdapter := adapter.MakeLogAdapter(logger)
-	logService := service.MakeSenderService(logAdapter)
+	logService := service.MakeSenderPoolServcie(logAdapter, 3, logger)
 	endpoints := endpoint.MakeEndpoints(logService)
 	httpHandler := transport.MakeHTTPHandler(endpoints, logger)
 

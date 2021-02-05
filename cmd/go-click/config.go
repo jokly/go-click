@@ -36,5 +36,5 @@ func loadConfig(configFilePath string) (*Config, error) {
 }
 
 func setDefaults() {
-	viper.SetDefault("http.port", 8080)
+	viper.SetDefault("http.port", 8888)
 }

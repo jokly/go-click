@@ -16,7 +16,7 @@ func MakeLogAdapter(logger log.Logger) Adapter {
 }
 
 func (svc *logAdapter) Send(event interface{}) error {
-	level.Info(svc.logger).Log("event", event)
+	level.Info(svc.logger).Log("event", &event)
 
 	return nil
 }
