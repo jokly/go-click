@@ -1,9 +1,14 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
@@ -38,8 +43,28 @@ func main() {
 		Handler: httpHandler,
 	}
 
-	err = server.ListenAndServe()
-	level.Error(logger).Log("err", err)
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM)
+
+	go func() {
+		if err := server.ListenAndServe(); err != nil {
+			if !errors.Is(err, http.ErrServerClosed) {
+				level.Info(logger).Log("err", err)
+			}
+		}
+	}()
+
+	level.Info(logger).Log("msg", fmt.Sprintf("Server started at %s", server.Addr))
+
+	<-sigChan
+
+	if err := server.Shutdown(context.Background()); err != nil {
+		level.Info(logger).Log("err", err)
+	}
+
+	svc.Stop()
+
+	level.Info(logger).Log("msg", "Server stoped")
 }
 
 func makeService(config *Config, logger log.Logger) service.Service {
