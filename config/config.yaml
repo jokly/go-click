@@ -5,3 +5,8 @@ logger:
 
 http:
   port: 8080
+
+sender:
+  isPool: true
+  numWorkers: 5
+  adapter: 'log'

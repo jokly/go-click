@@ -5,6 +5,8 @@ import (
 	"github.com/go-kit/kit/log/level"
 )
 
+const LogAdapterName = "log"
+
 type logAdapter struct {
 	logger log.Logger
 }

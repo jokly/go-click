@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"github.com/jokly/go-click/internal/endpoint"
 	"github.com/jokly/go-click/internal/service"
@@ -28,9 +29,8 @@ func main() {
 		_ = zLogger.Sync()
 	}()
 
-	logAdapter := adapter.MakeLogAdapter(logger)
-	logService := service.MakeSenderPoolServcie(logAdapter, 3, logger)
-	endpoints := endpoint.MakeEndpoints(logService)
+	svc := makeService(config, logger)
+	endpoints := endpoint.MakeEndpoints(svc)
 	httpHandler := transport.MakeHTTPHandler(endpoints, logger)
 
 	server := &http.Server{
@@ -40,4 +40,24 @@ func main() {
 
 	err = server.ListenAndServe()
 	level.Error(logger).Log("err", err)
+}
+
+func makeService(config *Config, logger log.Logger) service.Service {
+	var adap adapter.Adapter
+
+	switch config.Sender.Adapter {
+	case adapter.LogAdapterName:
+		adap = adapter.MakeLogAdapter(logger)
+	default:
+		adap = adapter.MakeLogAdapter(logger)
+	}
+
+	var svc service.Service
+	if config.Sender.IsPool {
+		svc = service.MakeSenderPoolServcie(adap, config.Sender.NumWorkers, logger)
+	} else {
+		svc = service.MakeSenderService(adap, logger)
+	}
+
+	return svc
 }

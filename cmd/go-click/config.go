@@ -7,6 +7,7 @@ import (
 type Config struct {
 	Logger LoggerConfig
 	HTTP   HTTPConfig
+	Sender SenderConfig
 }
 
 type LoggerConfig struct {
@@ -14,6 +15,12 @@ type LoggerConfig struct {
 }
 type HTTPConfig struct {
 	Port int
+}
+
+type SenderConfig struct {
+	IsPool     bool
+	NumWorkers uint8
+	Adapter    string
 }
 
 func loadConfig(configFilePath string) (*Config, error) {
@@ -36,5 +43,11 @@ func loadConfig(configFilePath string) (*Config, error) {
 }
 
 func setDefaults() {
-	viper.SetDefault("http.port", 8888)
+	viper.SetDefault("logger.minLevel", 0)
+
+	viper.SetDefault("http.port", 8080)
+
+	viper.SetDefault("sender.isPool", false)
+	viper.SetDefault("sender.numWorkers", 3)
+	viper.SetDefault("sender.adapter", "log")
 }
