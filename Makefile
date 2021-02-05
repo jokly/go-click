@@ -1,20 +1,9 @@
-PROJECT = go-click
-
-OS ?= $(shell uname -s | tr A-Z a-z)
-ARCH ?= amd64
-
 GO ?= go
-GOOS ?= $(OS)
-GOARCH ?= $(ARCH)
-CGO_ENABLED ?= 1
+GOOS ?= $(shell uname -s | tr A-Z a-z)
+GOARCH ?= amd64
+CGO_ENABLED ?= 0
 GOPROXY ?= direct
-BASE_LDFLAGS = -w -s
-
-ifneq ($(OS),darwin)
-LDFLAGS = $(BASE_LDFLAGS) -linkmode external -extldflags -static
-else
-LDFLAGS = $(BASE_LDFLAGS)
-endif
+LDFLAGS = -w -s
 
 GO_ENV = env GOPROXY=$(GOPROXY) GOOS=$(GOOS) GOARCH=$(GOARCH) CGO_ENABLED=$(CGO_ENABLED)
 GO_BUILD ?= $(GO_ENV) $(GO) build -ldflags "$(LDFLAGS)"
@@ -22,9 +11,9 @@ GO_RUN ?= $(GO_ENV) $(GO) run
 GO_TEST ?= $(GO_ENV) $(GO) test -count=1 -failfast
 GOLANGCI_LINT ?= golangci-lint
 
-binary: $(PROJECT)
+PROJECT = go-click
 
-$(PROJECT):
+binary:
 	$(GO_BUILD) -o $(PROJECT) cmd/$(PROJECT)/*.go
 
 run:
@@ -32,3 +21,6 @@ run:
 
 lint:
 	$(GOLANGCI_LINT) run
+
+clean:
+	@rm $(PROJECT) || true
