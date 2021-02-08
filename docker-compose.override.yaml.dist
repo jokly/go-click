@@ -1,0 +1,4 @@
+services:
+  go-click:
+    ports:
+    - "8888:8080"

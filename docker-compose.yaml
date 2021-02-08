@@ -1,0 +1,10 @@
+version: "3.9"
+
+services:
+  go-click:
+    container_name: go-click
+    build: .
+    volumes: 
+      - type: bind
+        source: ./config/config.dev.yaml
+        target: /config/config.yaml

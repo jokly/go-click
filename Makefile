@@ -24,3 +24,8 @@ lint:
 
 clean:
 	@rm $(PROJECT) || true
+
+docker_compose:
+	@cp config/config.yaml config/config.dev.yaml
+	@cp docker-compose.override.yaml.dist docker-compose.override.yaml
+	@docker-compose up -d --build

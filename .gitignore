@@ -1,1 +1,3 @@
+/config/config.dev.yaml
 /go-click
+/docker-compose.override.yaml
