@@ -17,8 +17,12 @@ func MakeLogAdapter(logger log.Logger) Adapter {
 	}
 }
 
-func (svc *logAdapter) Send(event interface{}) error {
-	level.Info(svc.logger).Log("event", &event)
+func (adap *logAdapter) Send(event interface{}) error {
+	level.Info(adap.logger).Log("event", &event)
 
+	return nil
+}
+
+func (adap *logAdapter) Stop() error {
 	return nil
 }

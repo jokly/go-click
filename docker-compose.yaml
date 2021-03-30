@@ -8,3 +8,13 @@ services:
       - type: bind
         source: ./config/config.dev.yaml
         target: /config/config.yaml
+
+  rabbitmq:
+    image: rabbitmq:3.8-alpine
+
+  clickhouse:
+    image: yandex/clickhouse-server:21.2.2-alpine
+    volumes: 
+      - type: bind
+        source: ./scripts/clickhouse
+        target: /docker-entrypoint-initdb.d
